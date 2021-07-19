@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocketServer Example Webpage</title>
+    <style>
+        #output {
+            font: bold 32px arial;
+            margin: auto;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+
+    <input type="text" id="input" />
+    <button onclick="sendMessage()">Send</button>
+    <div id="chat"></div>
+
+    <script>
+
+        var ws = new WebSocket('ws://localhost:8080/chat');
+        ws.onopen = function () {
+            document.body.style.backgroundColor = '#cfc';
+        };
+        ws.onclose = function () {
+            document.body.style.backgroundColor = null;
+        };
+        ws.onmessage = function (event) {
+            document.getElementById('chat').innerHTML += "Server: " + event.data + "<br>";
+        };
+
+        function sendMessage() {
+            let req = {
+                type: "msg",
+                content: document.getElementById("input").value
+            };
+            //let content = document.getElementById("input").value;
+            ws.send(JSON.stringify(req));
+
+            document.getElementById("input").textContent = "";
+            document.getElementById('chat').innerHTML += "Cient: " + req.content + "<br>";
+        }
+    </script>
+
+</body>
+</html>
