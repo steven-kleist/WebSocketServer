@@ -13,22 +13,6 @@ namespace WebSocketServer
     class Program
     {
 
-        public class Options
-        {
-            [Option('h', "host", Required = true, HelpText = "Host address to listening on")]
-            public string Host { get; set; }
-
-            [Option('p', "port", Required = true, HelpText = "Port to listening on")]
-            public int Port { get; set; }
-
-            [Option('s', "staticpath", Required = false, Default = "./Public", HelpText = "Path to serve static files from")]
-            public string StaticPath { get; set; }
-
-            [Option('e', "endpoints", Required = true)]
-            public IEnumerable<string> Endpoints { get; set; }
-        }
-
-
         protected static HttpServer httpsvc;
         static void Main(string[] args)
         {
@@ -50,18 +34,21 @@ namespace WebSocketServer
             httpsvc.OnGet += Httpsvc_OnGet;
 
             Console.WriteLine("Register services...");
-            foreach (var item in options.Endpoints)
+            var endpoints = EndpointLoader.Load(options.Endpoints);
+
+
+            foreach (var e in endpoints)
             {
-                var parts = item.Split('=');
-                if (parts.Length == 2)
+
+                if (e.Engine == "lua")
                 {
-                    httpsvc.AddWebSocketService(parts[0], () => new LuaBehavior(parts[1]));
-                    Console.WriteLine("  {0} => '{1}'", parts[0], parts[1]);
+                    httpsvc.AddWebSocketService(e.Url, () => new LuaBehavior(e.BasePath, e.MainScript));
                 }
-                else
+                else if (e.Engine == "js")
                 {
-                    Console.WriteLine($"Error: {item} is not well formed. Use '/chat=./Endpoints/chat' as an example.");
+                    httpsvc.AddWebSocketService(e.Url, () => new JavaScriptBehavior(e.BasePath, e.MainScript));
                 }
+
                 
             }
 

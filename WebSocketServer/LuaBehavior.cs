@@ -11,11 +11,13 @@ namespace WebSocketServer
     public class LuaBehavior : WebSocketBehavior
     {
         protected readonly string BasePath;
+        protected readonly string MainFile;
         private Script _script = new Script();
-        public LuaBehavior(string basepath)
+        public LuaBehavior(string basepath, string mainfile)
         {
             _script.Options.ScriptLoader = new FileSystemScriptLoader();
             BasePath = basepath;
+            MainFile = mainfile;
             Action<string> send = x => Send(x);
             _script.Globals["send"] = send;
 
@@ -24,7 +26,7 @@ namespace WebSocketServer
 
             
 
-            _script.DoFile(Path.Combine(BasePath, "main.lua"));
+            _script.DoFile(Path.Combine(BasePath, MainFile));
         }
 
         protected override void OnOpen()

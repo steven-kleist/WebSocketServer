@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Endpoint>
+  <url>/chat2</url>
+  <engine>js</engine> <!-- js -->
+  <main>index.js</main>
+</Endpoint>
