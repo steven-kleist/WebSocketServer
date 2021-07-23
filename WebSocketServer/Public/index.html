@@ -18,6 +18,12 @@
     <button onclick="sendMessage()">Send</button>
     <div id="chat"></div>
 
+    <hr />
+
+    <input type="text" id="input2" />
+    <button onclick="sendMessage2()">Send</button>
+    <div id="chat2"></div>
+
     <script>
 
         var ws = new WebSocket('ws://localhost:8080/chat');
@@ -42,6 +48,31 @@
             document.getElementById("input").textContent = "";
             document.getElementById('chat').innerHTML += "Cient: " + req.content + "<br>";
         }
+
+
+
+        //var ws2 = new WebSocket('ws://localhost:8080/chat2');
+        //ws2.onopen = function () {
+        //    document.body.style.backgroundColor = '#cfc';
+        //};
+        //ws2.onclose = function () {
+        //    document.body.style.backgroundColor = null;
+        //};
+        //ws2.onmessage = function (event) {
+        //    document.getElementById('chat2').innerHTML += "Server: " + event.data + "<br>";
+        //};
+
+        //function sendMessage2() {
+        //    let req = {
+        //        type: "msg",
+        //        content: document.getElementById("input2").value
+        //    };
+        //    //let content = document.getElementById("input").value;
+        //    ws.send(JSON.stringify(req));
+
+        //    document.getElementById("input2").textContent = "";
+        //    document.getElementById('chat2').innerHTML += "Cient: " + req.content + "<br>";
+        //}
     </script>
 
 </body>

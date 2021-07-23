@@ -1,8 +1,10 @@
-﻿function on_open(event) {
+﻿let logger = require("logger");
+
+function on_open(event) {
     console.log("on_open:");
     console.log(event);
     for (let item of Object.keys(event)) {
-        console.log(item);
+        logger.log(item);
     }
 }
 

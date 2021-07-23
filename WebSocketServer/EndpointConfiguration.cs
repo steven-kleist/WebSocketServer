@@ -15,7 +15,7 @@ namespace WebSocketServer
         public string Url { get; set; }
 
         [XmlElement("engine")]
-        public string Engine { get; set; }
+        public EndpointType.Type Engine { get; set; }
 
         [XmlElement("main")]
         public string MainScript { get; set; }

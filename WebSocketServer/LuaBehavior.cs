@@ -15,9 +15,14 @@ namespace WebSocketServer
         private Script _script = new Script();
         public LuaBehavior(string basepath, string mainfile)
         {
-            _script.Options.ScriptLoader = new FileSystemScriptLoader();
             BasePath = basepath;
             MainFile = mainfile;
+
+            _script.Options.ScriptLoader = new FileSystemScriptLoader
+            {
+                ModulePaths = new string[] { Path.Combine(BasePath, "?.lua") }
+            };
+            
             Action<string> send = x => Send(x);
             _script.Globals["send"] = send;
 
@@ -26,7 +31,14 @@ namespace WebSocketServer
 
             
 
-            _script.DoFile(Path.Combine(BasePath, MainFile));
+            try
+            {
+                _script.DoFile(Path.Combine(BasePath, MainFile));
+            }
+            catch (InterpreterException e)
+            {
+                ReportError(e);
+            }
         }
 
         protected override void OnOpen()
@@ -40,7 +52,7 @@ namespace WebSocketServer
             {
                 _ = _script.Call(_script.Globals["on_open"], dict);
             }
-            catch (ScriptRuntimeException err)
+            catch (InterpreterException err)
             {
                 ReportError(err);
             }
@@ -58,7 +70,7 @@ namespace WebSocketServer
             {
                 _ = _script.Call(_script.Globals["on_close"], dict);
             }
-            catch (ScriptRuntimeException err)
+            catch (InterpreterException err)
             {
                 ReportError(err);
             }
@@ -69,9 +81,9 @@ namespace WebSocketServer
             {
                 { "data", e.Data },
                 { "rawdata", e.RawData },
-                { "isbinary", e.IsBinary },
-                { "isping", e.IsPing },
-                { "istext", e.IsText },
+                { "is_binary", e.IsBinary },
+                { "is_ping", e.IsPing },
+                { "is_text", e.IsText },
                 { "session_id", ID }
             };
 
@@ -79,7 +91,7 @@ namespace WebSocketServer
             {
                 _ = _script.Call(_script.Globals["on_message"], dict);
             }
-            catch (ScriptRuntimeException err)
+            catch (InterpreterException err)
             {
                 ReportError(err);
             }
@@ -87,7 +99,7 @@ namespace WebSocketServer
 
         }
 
-        private static void ReportError(ScriptRuntimeException e)
+        private static void ReportError(InterpreterException e)
         {
             Console.WriteLine("Error in Lua script:");
             Console.Write(e.DecoratedMessage);

@@ -40,11 +40,11 @@ namespace WebSocketServer
             foreach (var e in endpoints)
             {
 
-                if (e.Engine == "lua")
+                if (e.Engine == EndpointType.Type.Lua)
                 {
                     httpsvc.AddWebSocketService(e.Url, () => new LuaBehavior(e.BasePath, e.MainScript));
                 }
-                else if (e.Engine == "js")
+                else if (e.Engine == EndpointType.Type.JavaScript)
                 {
                     httpsvc.AddWebSocketService(e.Url, () => new JavaScriptBehavior(e.BasePath, e.MainScript));
                 }

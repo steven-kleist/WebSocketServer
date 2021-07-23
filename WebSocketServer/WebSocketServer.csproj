@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
-    <PackageReference Include="Jint" Version="3.0.0-beta-2033" />
     <PackageReference Include="Jurassic" Version="3.2.2" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
     <PackageReference Include="MoonSharp" Version="2.0.0" />
@@ -23,7 +22,13 @@
     <None Update="Endpoints\chat2\index.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Endpoints\chat2\logger.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Endpoints\chat\endpoint.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Endpoints\chat\logger.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Endpoints\chat\main.lua">
