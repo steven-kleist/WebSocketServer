@@ -44,11 +44,6 @@ namespace WebSocketServer
                 {
                     httpsvc.AddWebSocketService(e.Url, () => new LuaBehavior(e.BasePath, e.MainScript));
                 }
-                else if (e.Engine == EndpointType.Type.JavaScript)
-                {
-                    httpsvc.AddWebSocketService(e.Url, () => new JavaScriptBehavior(e.BasePath, e.MainScript));
-                }
-
                 
             }
 

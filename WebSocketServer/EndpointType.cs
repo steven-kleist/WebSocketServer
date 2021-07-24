@@ -13,9 +13,7 @@ namespace WebSocketServer
         public enum Type
         {
             [XmlEnum("lua")]
-            Lua,
-            [XmlEnum("js")]
-            JavaScript
+            Lua
         }
     }
 }
