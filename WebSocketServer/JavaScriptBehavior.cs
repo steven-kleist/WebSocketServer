@@ -14,7 +14,7 @@ namespace WebSocketServer
         protected readonly string BasePath;
         protected readonly string MainFile;
         private readonly Jurassic.ScriptEngine _script = new();
-        public JavaScriptBehavior(string basepath, string mainfile)
+        public JavaScriptBehavior(string basepath, string mainfile = "index.js")
         {
             BasePath = basepath;
             MainFile = mainfile;

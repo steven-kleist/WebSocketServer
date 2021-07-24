@@ -1,28 +1,24 @@
 ﻿-- main.lua
 
-for k,v in pairs(package) do
-	print(k,v)
-end
 
-local logger = require "logger"
---print(package.path)
-
-
-function on_open(event)
-	logger.log("New session: " .. event.session_id)
+function on_open()
+	print("New session: " .. session.id)
+	websocket.send(string.format("Hello user (%s).", session.id))
 end
 
 
 function on_close(event)
-	print("Session closed: " .. event.session_id)
+	print("Session " .. session.id .. " was closed:")
+	print(string.format("Code: %d, Reason: %s", event.code, event.reason))
+
+	websocket.send(string.format("Good bye, %s.", session.id))
 end
 
-function on_message(event)
+function on_message(msg)
 
-	print("type(event): " .. type(event))
-	print("Session: " .. event.session_id)
-	print("Data: " .. event.data)
-	local result = json.parse(event.data)
+	print(string.format("Message from %s:", session.id))
+	print(string.format("Message Content: %s", msg.data))
+	local result = json.parse(msg.data)
 
-	send("You wrote: " .. result.content)
+	websocket.send("You wrote: " .. result.content)
 end

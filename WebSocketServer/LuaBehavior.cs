@@ -8,12 +8,16 @@ using WebSocketSharp.Server;
 
 namespace WebSocketServer
 {
+
     public class LuaBehavior : WebSocketBehavior
     {
         protected readonly string BasePath;
         protected readonly string MainFile;
+
+        private Dictionary<string, object> websocketObject;
         private Script _script = new Script();
-        public LuaBehavior(string basepath, string mainfile)
+
+        public LuaBehavior(string basepath, string mainfile = "main.lua")
         {
             BasePath = basepath;
             MainFile = mainfile;
@@ -22,14 +26,16 @@ namespace WebSocketServer
             {
                 ModulePaths = new string[] { Path.Combine(BasePath, "?.lua") }
             };
-            
+
             Action<string> send = x => Send(x);
-            _script.Globals["send"] = send;
-
             Action<string> sendall = x => Sessions.Broadcast(x);
-            _script.Globals["sendall"] = sendall;
 
-            
+            websocketObject = new Dictionary<string, object> {
+                { "send", send },
+                { "sendall", sendall }
+            };
+
+            _script.Globals["websocket"] = websocketObject;
 
             try
             {
@@ -43,14 +49,16 @@ namespace WebSocketServer
 
         protected override void OnOpen()
         {
-            var dict = new Dictionary<string, object>
+            var session = new Dictionary<string, object>
             {
-                { "session_id", ID }
+                { "id", ID }
             };
+
+            _script.Globals["session"] = session;
             
             try
             {
-                _ = _script.Call(_script.Globals["on_open"], dict);
+                _ = _script.Call(_script.Globals["on_open"]);
             }
             catch (InterpreterException err)
             {
@@ -59,37 +67,36 @@ namespace WebSocketServer
         }
         protected override void OnClose(CloseEventArgs e)
         {
-            var dict = new Dictionary<string, object>
+            var eventData = new Dictionary<string, object>
             {
                 { "code", e.Code },
                 { "reason", e.Reason },
-                { "was_clean", e.WasClean },
-                { "session_id", ID }
+                { "was_clean", e.WasClean }
             };
            try
             {
-                _ = _script.Call(_script.Globals["on_close"], dict);
+                _ = _script.Call(_script.Globals["on_close"], eventData);
             }
             catch (InterpreterException err)
             {
+                Error("Error while executing server function", err);
                 ReportError(err);
             }
         }
         protected override void OnMessage(MessageEventArgs e)
         {
-            var dict = new Dictionary<string, object>
+            var message = new Dictionary<string, object>
             {
                 { "data", e.Data },
                 { "rawdata", e.RawData },
                 { "is_binary", e.IsBinary },
                 { "is_ping", e.IsPing },
-                { "is_text", e.IsText },
-                { "session_id", ID }
+                { "is_text", e.IsText }
             };
 
             try
             {
-                _ = _script.Call(_script.Globals["on_message"], dict);
+                _ = _script.Call(_script.Globals["on_message"], message);
             }
             catch (InterpreterException err)
             {

@@ -19,11 +19,23 @@ namespace WebSocketServer
                 var fileinfo = new FileInfo(file);
                 var xs = new XmlSerializer(typeof(EndpointConfiguration));
                 var sr = new StreamReader(fileinfo.FullName);
-                var point = (EndpointConfiguration)xs.Deserialize(sr);
-                point.BasePath = fileinfo.DirectoryName;
-                sr.Close();
 
-                list.Add(point);
+                try
+                {
+                    var point = (EndpointConfiguration)xs.Deserialize(sr);
+                    point.BasePath = fileinfo.DirectoryName;
+
+                    list.Add(point);
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex.Message);
+                }
+                finally
+                {
+                    sr.Close();
+                }
+                
             }
 
             return list;
